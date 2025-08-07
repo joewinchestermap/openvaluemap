@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Winchester Property Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        html, body, #map {{
+            height: 100%;
+            margin: 0;
+        }}
+        #popup {{
+            position: absolute;
+            background: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: none;
+            z-index: 1000;
+            font-family: sans-serif;
+        }}
+    </style>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+</head>
+<body>
+<div id="map"></div>
+<div id="popup"></div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoib3BlbnZhbHVtYXBzIiwiYSI6ImNsa3ZidHhxOTAwNHozb3FzOGh0N3l0ZTYifQ.m6m9RL4uMSaV3oIKrjMBZQ';
+    const map = new mapboxgl.Map({{
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-1.3121, 51.0632],
+        zoom: 13
+    }});
+
+    const popup = document.getElementById("popup");
+
+    const properties = [
+        {{ id: 1, coords: [-1.3121, 51.0632], value: "£675,000", sold: "April 2019" }},
+        {{ id: 2, coords: [-1.3050, 51.0625], value: "£740,000", sold: "July 2020" }},
+        {{ id: 3, coords: [-1.3180, 51.0610], value: "£625,000", sold: "March 2018" }}
+    ];
+
+    properties.forEach(prop => {{
+        const el = document.createElement('div');
+        el.className = 'marker';
+        el.style.width = '20px';
+        el.style.height = '20px';
+        el.style.backgroundColor = 'red';
+        el.style.borderRadius = '50%';
+        el.style.cursor = 'pointer';
+
+        const marker = new mapboxgl.Marker(el)
+            .setLngLat(prop.coords)
+            .addTo(map);
+
+        el.addEventListener('click', (event) => {{
+            popup.style.display = 'block';
+            popup.style.left = `${event.pageX + 10}px`;
+            popup.style.top = `${event.pageY + 10}px`;
+            popup.innerHTML = `
+                <strong>Estimated Value:</strong> ${prop.value}<br>
+                <strong>Last Sold:</strong> ${prop.sold}<br><br>
+                <button onclick="alert('Interest registered!')">I'm Interested</button>
+            `;
+        }});
+    }});
+
+    map.on('click', () => {{
+        popup.style.display = 'none';
+    }});
+</script>
+</body>
+</html>
